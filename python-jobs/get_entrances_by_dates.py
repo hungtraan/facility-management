@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from urllib2 import Request, urlopen
 from urllib import urlencode
 import base64
@@ -126,7 +127,7 @@ if __name__ == "__main__":
     db=MySQLdb.connect(host="us-cdbr-iron-east-03.cleardb.net",user="bbaf414965fded", passwd="2f3310e8",db="heroku_fa3c47157b8ffc1",charset='utf8',use_unicode=True)
 
     # Simple scheduler to get and save data every 5 minutes
-    while True:
-        getAndSaveData(db)
-        time.sleep(300) # 300s = 1 minutes
+    #while True:
+    getAndSaveData(db)
+    #time.sleep(300) # 300s = 1 minutes
     
