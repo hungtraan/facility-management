@@ -10,8 +10,13 @@ default: &default
   timeout: 5000
 
 development:
-  <<: *default
-  database: db/development.sqlite3
+  #<<: *default
+  #database: db/development.sqlite3
+  adapter: mysql2
+  database: heroku_fa3c47157b8ffc1
+  username: bbaf414965fded
+  password: 2f3310e8
+  host: us-cdbr-iron-east-03.cleardb.net
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -23,3 +28,8 @@ test:
 production:
   <<: *default
   database: db/production.sqlite3
+  # adapter: mysql2
+  # database: heroku_fa3c47157b8ffc1
+  # username: bbaf414965fded
+  # password: 2f3310e8
+  # host: us-cdbr-iron-east-03.cleardb.net
