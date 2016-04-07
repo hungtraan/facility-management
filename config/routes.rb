@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   root 'pages#student'
 
   get '/bye' => 'application#bye'
-
-
+  get 'pages/data_get', :defaults => { :format => 'json' }
+  match 'pages/data_post' => 'pages#data_post', via: :post
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

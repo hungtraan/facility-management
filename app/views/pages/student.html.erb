@@ -1,3 +1,22 @@
-<p><%= @zone_name.inspect %></p>
-<p><%= @occupancy.inspect %></p>
-<p>Last updated at <%= @updated_at.inspect %></p>
+<% @title = "Real-time Occupancy at " + @zone_name %>
+
+<% provide(:title, @title) %>
+
+<% @perc = '%.2f' % (@occupancy.to_f/120*100)  %>
+
+<div class="container">
+	<input id='perc' style='display:none' value="<%= @perc %>"></input>
+	<input id='occupancy' style='display:none' value="<%= @occupancy %>"></input>
+	<div class="row">
+		<div class="col-md-12 centered">
+			<p class="zone_name"><%= @zone_name %></p>
+			<div id="chart"></div>
+			<p class="updated_at">Last updated at 
+				<span class='time'><%= @updated_at %></span>
+			</p>
+		</div>
+
+		<input type='button' class="update" value='Update'>
+	</div>
+	
+</div>
