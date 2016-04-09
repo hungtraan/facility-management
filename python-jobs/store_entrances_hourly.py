@@ -84,27 +84,41 @@ def get_entrances_report(access_token, array_keys_list, ISODATE1, ISODATE2):
 #    query_r = requests.post('https://api-v2.scanalyticsinc.com/metrics?limit=15&page=1', headers=headers, verify=False)
 #    print query_r.text
 
+
+def roundTime(dt=None):
+    """Round a datetime object to a multiple of a timedelta
+    dt : datetime.datetime object, default now.
+    dateDelta : timedelta object, we round to a multiple of this, default 1 minute.
+    Author: Thierry Husson 2012 - Use it as you want but don't blame me.
+            Stijn Nevens 2014 - Changed to use only datetime objects as variables
+    """
+    now = datetime.datetime.now()
+    if dt == None : dt = now
+
+    return datetime.time(dt.hour,0,0)
+
+
 def getAndSaveData(db):
     now = datetime.datetime.now()
-    twelveAmToday = datetime.datetime.combine(now.date(), datetime.time(0,0,0))
-    isoDateNow = now.isoformat()
-    isoDateDayStart = twelveAmToday.isoformat()
-    sqlFormatNow = datetime.datetime.strftime(now,'%Y-%m-%d %H:%M:%S')
-    sqlFormatDayStart = datetime.datetime.strftime(twelveAmToday,'%Y-%m-%d %H:%M:%S')
-    # ISODATE1 = "2016-03-07T04:00:00-05:00"
-    # ISODATE2 = "2016-03-07T17:00:00-05:00"
+    thisHourRounded = datetime.datetime.combine(now.date(),roundTime())
+    prevHourRounded = datetime.datetime.combine(now.date(),roundTime(now-datetime.timedelta(hours=1)))
+
+    isoDateThisHourRounded = thisHourRounded.isoformat()
+    isoDateprevHourRounded = prevHourRounded.isoformat()
+    sqlFormatthisHourRounded = datetime.datetime.strftime(thisHourRounded,'%Y-%m-%d %H:%M:%S')
+    sqlFormatprevHourRounded = datetime.datetime.strftime(prevHourRounded,'%Y-%m-%d %H:%M:%S')
+    
     username = 'tran_h3@denison.edu'
     password = 'makeitcount'
     clientId = '41082c49d21ec03ab278adadca407567585621e5'
     clientSecret = 'e74845de757512ca7d9ca78a809a8d9335ad5d7cebc385c192f71e47d0be9d7a'
     access_token = get_token(username, password, clientId, clientSecret)
     #print "access_token=",access_token
-    print(sqlFormatDayStart)
-    print(sqlFormatNow)
+    print(sqlFormatprevHourRounded, " - ", sqlFormatthisHourRounded)
     
     #get_available_metrics(access_token)
 
-    for doc in get_entrances_report(access_token, array_keys_list, isoDateNow, isoDateDayStart):
+    for doc in get_entrances_report(access_token, array_keys_list, isoDateThisHourRounded, isoDateprevHourRounded):
         entrances = doc["entrances"]
         exits = doc["exits"]
         occupancy = entrances - exits
@@ -117,7 +131,7 @@ def getAndSaveData(db):
     c = db.cursor()
 
     try:
-        sql_cmd = "INSERT INTO occupancy (zone_id, zone_name, time_from, time_to, entrances, exits, occupancy) VALUES (1,'Crowne Fitness Center','"+ sqlFormatDayStart + "','" + sqlFormatNow + "'," + str(entrances) + "," + str(exits) + "," + str(occupancy) + ")" 
+        sql_cmd = "INSERT INTO hourly_traffic (zone_id, zone_name, time_from, time_to, entrances, exits, occupancy) VALUES (1,'Crowne Fitness Center','"+ sqlFormatprevHourRounded + "','" + sqlFormatthisHourRounded + "'," + str(entrances) + "," + str(exits) + "," + str(occupancy) + ")" 
         c.execute(sql_cmd)
         db.commit()
     except Exception as e:

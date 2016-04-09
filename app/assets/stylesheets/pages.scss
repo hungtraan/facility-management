@@ -1,3 +1,45 @@
 // Place all the styles related to the pages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+/* Using rems to easily scale these gauges */
+body {
+    margin-top: 4rem;
+    font-weight: 400;
+    font-family: 'Open Sans';
+    height: 100%;
+    background-color: rgb(231, 255, 250);
+    
+    .container{
+        margin: 0 auto;
+        text-align: center;
+        .row{
+            #chart {
+                width: 300px;
+                margin: 0 auto;
+            }
+
+            .gauge .background {
+                fill: #ddd;
+            }
+
+            .gauge .value {
+                fill: #777;
+                font-size: 1.5rem;
+            }
+
+            .gauge .value tspan {
+                font-size: 1rem;
+            }
+
+            .gauge .scale text {
+                fill: #999;
+                font-size: 0.75rem;
+            }
+        }
+
+
+    }
+
+}
+

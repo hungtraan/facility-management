@@ -1,4 +1,5 @@
 class PagesController < ApplicationController
+
 def student
       mysql_host = 'us-cdbr-iron-east-03.cleardb.net'
       mysql_username = 'bbaf414965fded'
@@ -19,13 +20,31 @@ def student
       @occupancy = row["occupancy"]
       @zone_name = row["zone_name"]
       @updated_at = row["time_to"]
-      # puts row["occupancy"] # row["id"].class == Fixnum
       if row["dne"]  # non-existant hash entry is nil
       puts row["dne"]
       end
     end
-    
-    # puts "Latest Occupancy: " + results
+  end
+
+  def data_get
+    time = Time.new
+    time1 = time.strftime("%Y-%m-%d %H:%M:%S")
+    p time1
+    respond_to do |format|
+      format.json {
+        render :json => [time1]
+      }
+    end
+  end
+
+  def data_post
+    name = params[:name]
+    location = params[:location]
+    respond_to do |format|
+      format.json {
+        render :json => [name, location]
+      }
+    end
   end
 
 end
