@@ -90,7 +90,7 @@ def getAndSaveData(db):
     isoDateNow = now.isoformat()
     isoDateDayStart = twelveAmToday.isoformat()
     sqlFormatNow = datetime.datetime.strftime(now,'%Y-%m-%d %H:%m:%S')
-    sqlFormatDayStart = datetime.datetime.strftime(twelveAmToday,'%Y-%m-%d %H:%m:%S')
+    sqlFormatDayStart = datetime.datetime.strftime(twelveAmToday,'%Y-%m-%d %H:%M:%S')
     # ISODATE1 = "2016-03-07T04:00:00-05:00"
     # ISODATE2 = "2016-03-07T17:00:00-05:00"
     username = 'tran_h3@denison.edu'
@@ -98,8 +98,10 @@ def getAndSaveData(db):
     clientId = '41082c49d21ec03ab278adadca407567585621e5'
     clientSecret = 'e74845de757512ca7d9ca78a809a8d9335ad5d7cebc385c192f71e47d0be9d7a'
     access_token = get_token(username, password, clientId, clientSecret)
-    print "access_token=",access_token
-
+    #print "access_token=",access_token
+    print(sqlFormatDayStart)
+    print(sqlFormatNow)
+    
     #get_available_metrics(access_token)
 
     for doc in get_entrances_report(access_token, array_keys_list, isoDateNow, isoDateDayStart):
