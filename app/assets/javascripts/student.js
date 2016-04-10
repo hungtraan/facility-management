@@ -111,8 +111,9 @@ $(document).ready(function(){
 			dataType: 'json',
 			success: function (data) {
 				console.log(data);
-				$('.time').html(data);
-			    //update(data, data);
+				$('.time').html(data.time);
+				perc = Math.round(data.occupancy/120*100);
+			    update(perc, data.occupancy);
 			},
 			error: function (result) {
 			   error();
