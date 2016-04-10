@@ -9,16 +9,14 @@ import datetime
 import time
 import yaml
 import scanalytics
+import os
 
 array_keys_list = ["1AMDJ"]  # may have one or more array keys in the list
 
 def roundTime(dt=None):
-    """Round a datetime object to a multiple of a timedelta
-    dt : datetime.datetime object, default now.
-    dateDelta : timedelta object, we round to a multiple of this, default 1 minute.
-    Author: Thierry Husson 2012 - Use it as you want but don't blame me.
-            Stijn Nevens 2014 - Changed to use only datetime objects as variables
-    """
+    # Round input time down to Hour:00:00
+    # eg. 10:59:31 -> 10:00:00
+    # default value is now
     now = datetime.datetime.now()
     if dt == None : dt = now
 
