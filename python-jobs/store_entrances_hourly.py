@@ -66,7 +66,8 @@ def getAndSaveData(db):
         pass
    
 if __name__ == "__main__":
-    with open("config.yml", 'r') as ymlfile:
+    curdir = os.path.dirname(os.path.abspath(__file__))
+    with open(curdir+"/config.yml", 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
 
     # Connection to Heroku mysql db
