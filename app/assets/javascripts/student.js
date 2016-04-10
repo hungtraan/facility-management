@@ -92,12 +92,7 @@ $(document).ready(function(){
 
 	function textTween(transition, v) {
 	    transition.tween('text', function() {
-	        var interpolate = d3.interpolate(this.innerHTML, v),
-	            split = (v + '').split('.'),
-	            round = (split.length > 1) ? Math.pow(10, split[1].length) : 1;
-	        return function(t) {
-	            this.innerHTML = d3.format('d')(Math.round(interpolate(t) * round) / round) + '\npeople';
-	        };
+            this.innerHTML = d3.format('d')(v) + ' people';
 	    });
 	}
 
@@ -113,7 +108,7 @@ $(document).ready(function(){
 				console.log(data);
 				$('.time').html(data.time);
 				perc = Math.round(data.occupancy/120*100);
-			    update(perc, data.occupancy);
+				update(perc, data.occupancy);
 			},
 			error: function (result) {
 			   error();
