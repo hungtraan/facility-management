@@ -17,7 +17,9 @@ class PagesController < ApplicationController
     @@array_keys_list = ['1AMDJ']
 
     def student
-        
+        Rails.logger.debug "#{mysql_host}"
+        Rails.logger.info "#{mysql_host}"
+        puts mysql_host
         db = Mysql2::Client.new(:host => @@mysql_host, :username => @@mysql_username, :password => @@mysql_password, :port => 3306, :database => @@mysql_db_name, :flags => Mysql2::Client::MULTI_STATEMENTS )
         sql = "SELECT zone_name, time_to, occupancy FROM occupancy order by time_to desc limit 1
          "
@@ -68,12 +70,12 @@ class PagesController < ApplicationController
                 puts @exits
                 puts @occupancy
         }
-        puts @entrances
+        
         response = {'time' => time1,
-         'entrances' => @entrances,
-         'exits' => @exits,
-         'occupancy' => @occupancy
-        }.to_json
+                    'entrances' => @entrances,
+                    'exits' => @exits,
+                    'occupancy' => @occupancy
+                }.to_json
 
         respond_to do |format|
           format.json {
