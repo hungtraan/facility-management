@@ -56,8 +56,8 @@ if __name__ == "__main__":
 
     # Connection to Heroku mysql db
     
-    # mysql_env = 'mysql' # Production
-    mysql_env = 'mysql_heroku' # Heroku test
+    mysql_env = 'mysql' # Production
+    # mysql_env = 'mysql_heroku' # Heroku test
 
     host = cfg[mysql_env]['host']
     username = cfg[mysql_env]['user']
