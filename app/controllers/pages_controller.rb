@@ -5,10 +5,12 @@ class PagesController < ApplicationController
 
     cfg_path = Rails.root.join('python-jobs', 'config.yml').to_s
     @@cfg = YAML.load File.open(cfg_path)
-    Rails.env.production?
-        mysql_env = 'mysql' # Production
-    Rails.env.development?
+    
+    if Rails.env.development? 
         mysql_env = 'mysql_heroku' # Dev
+    elsif Rails.env.production? 
+        mysql_env = 'mysql' # Production
+    end
 
     @@mysql_host = @@cfg[mysql_env]['host']
     @@mysql_username = @@cfg[mysql_env]['user']
@@ -17,9 +19,7 @@ class PagesController < ApplicationController
     @@array_keys_list = ['1AMDJ']
 
     def student
-        Rails.logger.debug "#{mysql_host}"
-        Rails.logger.info "#{mysql_host}"
-        puts mysql_host
+        puts Rails.env
         db = Mysql2::Client.new(:host => @@mysql_host, :username => @@mysql_username, :password => @@mysql_password, :port => 3306, :database => @@mysql_db_name, :flags => Mysql2::Client::MULTI_STATEMENTS )
         sql = "SELECT zone_name, time_to, occupancy FROM occupancy order by time_to desc limit 1
          "
