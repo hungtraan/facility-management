@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   # root 'welcome#index'
   # root 'application#hello'
   root 'pages#student'
+  get '/admin' => 'admin#dashboard_realtime'
 
   get '/bye' => 'application#bye'
   get 'pages/data_get', :defaults => { :format => 'json' }
