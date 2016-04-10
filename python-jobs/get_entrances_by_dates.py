@@ -41,14 +41,14 @@ def getAndSaveData(db):
         print(occupancy)
     
     # Process with list command in db
-    # c = db.cursor()
-    # try:
-    #     sql_cmd = "INSERT INTO occupancy (zone_id, zone_name, time_from, time_to, entrances, exits, occupancy) VALUES (1,'Crowne Fitness Center','"+ sqlFormatDayStart + "','" + sqlFormatNow + "'," + str(entrances) + "," + str(exits) + "," + str(occupancy) + ")"
-    #     c.execute(sql_cmd)
-    #     db.commit()
-    # except Exception as e:
-    #     print(e)
-    #     pass
+    c = db.cursor()
+    try:
+        sql_cmd = "INSERT INTO occupancy (zone_id, zone_name, time_from, time_to, entrances, exits, occupancy) VALUES (1,'Crowne Fitness Center','"+ sqlFormatDayStart + "','" + sqlFormatNow + "'," + str(entrances) + "," + str(exits) + "," + str(occupancy) + ")"
+        c.execute(sql_cmd)
+        db.commit()
+    except Exception as e:
+        print(e)
+        pass
    
 if __name__ == "__main__":
     curdir = os.path.dirname(os.path.abspath(__file__))
