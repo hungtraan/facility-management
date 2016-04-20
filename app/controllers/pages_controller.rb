@@ -41,56 +41,56 @@ class PagesController < ApplicationController
         end
     end
 
-    def data_get
-        time = Time.new
-        time1 = time.strftime("%Y-%m-%d %H:%M:%S")
-        p time1
+    # def data_get
+    #     time = Time.new
+    #     time1 = time.strftime("%Y-%m-%d %H:%M:%S")
+    #     p time1
 
-        now = DateTime.now
-        twelveAmToday = DateTime.new(now.year, now.mon, now.mday, 0,0,0,now.zone)
-        isoDateNow = now.iso8601()
-        isoDateDayStart = twelveAmToday.iso8601()
-        sqlFormatNow = now.strftime('%Y-%m-%d %H:%M:%S')
-        sqlFormatDayStart = twelveAmToday.strftime('%Y-%m-%d %H:%M:%S')
+    #     now = DateTime.now
+    #     twelveAmToday = DateTime.new(now.year, now.mon, now.mday, 0,0,0,now.zone)
+    #     isoDateNow = now.iso8601()
+    #     isoDateDayStart = twelveAmToday.iso8601()
+    #     sqlFormatNow = now.strftime('%Y-%m-%d %H:%M:%S')
+    #     sqlFormatDayStart = twelveAmToday.strftime('%Y-%m-%d %H:%M:%S')
         
-        username = @@cfg['scanalytics']['username']
-        password = @@cfg['scanalytics']['password']
-        clientId = @@cfg['scanalytics']['clientId']
-        clientSecret = @@cfg['scanalytics']['clientSecret']
-        access_token = get_token(username, password, clientId, clientSecret)
+    #     username = @@cfg['scanalytics']['username']
+    #     password = @@cfg['scanalytics']['password']
+    #     clientId = @@cfg['scanalytics']['clientId']
+    #     clientSecret = @@cfg['scanalytics']['clientSecret']
+    #     access_token = get_token(username, password, clientId, clientSecret)
 
-        result = get_entrances_report(access_token, @@array_keys_list, isoDateDayStart, isoDateNow) 
-        result.each {
-            |row| 
-                @entrances = row["entrances"]
-                @exits = row["exits"]
-                @occupancy = @entrances - @exits
+    #     result = get_entrances_report(access_token, @@array_keys_list, isoDateDayStart, isoDateNow) 
+    #     result.each {
+    #         |row| 
+    #             @entrances = row["entrances"]
+    #             @exits = row["exits"]
+    #             @occupancy = @entrances - @exits
                 
-                puts @entrances
-                puts @exits
-                puts @occupancy
-        }
+    #             puts @entrances
+    #             puts @exits
+    #             puts @occupancy
+    #     }
         
-        response = {'time' => time1,
-                    'entrances' => @entrances,
-                    'exits' => @exits,
-                    'occupancy' => @occupancy
-                }.to_json
+    #     response = {'time' => time1,
+    #                 'entrances' => @entrances,
+    #                 'exits' => @exits,
+    #                 'occupancy' => @occupancy
+    #             }.to_json
 
-        respond_to do |format|
-          format.json {
-            render :json => response
-          }
-        end
-    end
+    #     respond_to do |format|
+    #       format.json {
+    #         render :json => response
+    #       }
+    #     end
+    # end
 
-    def data_post
-        name = params[:name]
-        location = params[:location]
-        respond_to do |format|
-          format.json {
-            render :json => [name, location]
-          }
-        end
-    end
+    # def data_post
+    #     name = params[:name]
+    #     location = params[:location]
+    #     respond_to do |format|
+    #       format.json {
+    #         render :json => [name, location]
+    #       }
+    #     end
+    # end
 end

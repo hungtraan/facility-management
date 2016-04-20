@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get '/bye' => 'application#bye'
   get 'pages/data_get', :defaults => { :format => 'json' }
   match 'pages/data_post' => 'pages#data_post', via: :post
+  match 'admin/data_post' => 'admin#data_post', via: :post
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

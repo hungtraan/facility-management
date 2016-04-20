@@ -126,7 +126,6 @@ $(document).ready(function(){
 	// 		alert( "Data Saved: " + msg );
 	// 		});
 	// });
-	
 });
 	
 

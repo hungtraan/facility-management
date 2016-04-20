@@ -4,7 +4,8 @@
 
 <% @perc = '%.2f' % (@occupancy.to_f/120*100)  %>
 
-<div class="container">
+<body class="student">
+	<div class="container">
 	<input id='perc' style='display:none' value="<%= @perc %>"></input>
 	<input id='occupancy' style='display:none' value="<%= @occupancy %>"></input>
 	<div class="row">
@@ -20,3 +21,4 @@
 	</div>
 	
 </div>
+</body>
