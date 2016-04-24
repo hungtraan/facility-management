@@ -7,7 +7,7 @@ def student
       db = Mysql2::Client.new(:host => mysql_host, :username => mysql_username, :password => mysql_password, :port => 3306, :database => mysql_db_name, :flags => Mysql2::Client::MULTI_STATEMENTS )
     sql = "select occupancy
     from 
-    (SELECT max(time_to), occupancy FROM occupancies) most_recent
+    (SELECT max(time_to), occupancy FROM occupancy) most_recent
      "
     results = ''
 
