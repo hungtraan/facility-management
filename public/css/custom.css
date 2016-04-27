@@ -1707,13 +1707,13 @@ h4.graph_title {
 .tile-stats .icon {
   color: #BAB8B8;
   position: absolute;
-  right: 53px;
+  right: 48px;
   top: 22px;
   z-index: 1;
 }
 .tile-stats .icon i {
   margin: 0;
-  font-size: 60px;
+  font-size: 48px;
   line-height: 0;
   vertical-align: bottom;
   padding: 0;

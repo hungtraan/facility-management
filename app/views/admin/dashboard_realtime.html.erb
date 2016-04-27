@@ -2,23 +2,9 @@
 
 <% provide(:title, @title) %>
 
-<% @perc = '%.2f' % (@occupancy.to_f/120*100)  %>
 <!-- <script src="js/chartjs/chart.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.js"></script>
-  
-<% if(false) %>
-<div class="container">
-  <input id='time_from' style='display:none' value='2016-04-07 00:00:00'></input>
-  <input id='time_to' style='display:none' value='2016-04-08 22:00:00'></input>
-  <div class="row">
-    <div class="col-md-12 centered">
-    </div>
-
-    <input type='button' class="update_admin" value='Update'>
-  </div>
-  
-</div>
-<% end %>
+ 
 
 <body class="nav-md">
 
@@ -183,36 +169,47 @@
         <div class="">
 
           <div class="row top_tiles">
+          <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="tile-stats">
+                <div class="icon"><i class="fa fa-tachometer"></i>
+                </div>
+                <div class="count current_occupancy"><%= @occupancy %></div>
+
+                <h3>Current Occupancy</h3>
+                <p><%= @updated_at %></p>
+              </div>
+            </div>
             <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
               <div class="tile-stats">
-                <div class="icon"><i class="fa fa-caret-square-o-right"></i>
+                <div class="icon"><i class="fa fa-exchange"></i>
                 </div>
-                <div class="count">3524</div>
+                <div class="count entrance-count">...</div>
 
-                <h3>Total Entrances</h3>
-                <p>Avg. Daily Entrances: <span class="daily_entrances">503</span></p>
+                <h3>Daily Entrances</h3>
+                <p>Total Entrances: <span class="total_entrances"></span></p>
+              </div>
+            </div>
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="tile-stats">
+                <div class="icon"><i class="fa fa-line-chart"></i>
+                </div>
+                <div class="count busiest_day">...</div>
+
+                <h3>Busiest Day</h3>
+                <p class="busiest_date"></p>
               </div>
             </div>
             <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
               <div class="tile-stats">
                 <div class="icon"><i class="fa fa-sort-amount-desc"></i>
                 </div>
-                <div class="count">210</div>
+                <div class="count">74</div>
 
-                <h3>Daily Avg. Occupancy</h3>
-                <p>Peak Day: <span class="peak_occupancy"> 210 (Saturday)</span></p>
+                <h3>Daily Occupancy</h3>
+                <p>Peak Day: <span class="peak_occupancy"> 95 (Saturday)</span></p>
               </div>
             </div>
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-              <div class="tile-stats">
-                <div class="icon"><i class="fa fa-sort-amount-asc"></i>
-                </div>
-                <div class="count">100</div>
-
-                <h3>Busiest Day</h3>
-                <p>Peak Occupancy: <span class="peak_occupancy"> 210 (Saturday)</span></p>
-              </div>
-            </div>
+            
             <!-- <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
               <div class="tile-stats">
                 <div class="icon"><i class="fa fa-sort-amount-desc"></i>
@@ -235,7 +232,7 @@
             </div> -->
           </div>
 
-          <div class="row">
+          <div class="row"> <!-- Bar chart Area -->
             <div class="col-md-12 col-sm-12">
               <div class="x_panel">
                 <div class="x_title">
@@ -252,10 +249,10 @@
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="demo-container" style="height:100%;">
                       <!-- <div id="placeholder33x" class="demo-placeholder"></div> -->
-                      <canvas id="mybarChart"></canvas>
+                      <canvas id="barChart"></canvas>
                     </div>
                     
-                    <div class="tiles">
+                    <!-- <div class="tiles">
                       <div class="col-md-4 tile">
                         <span>Total Sessions</span>
                         <h2>231,809</h2>
@@ -277,133 +274,52 @@
                                         <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
                                     </span>
                       </div>
-                    </div>
+                    </div> -->
 
                   </div>
 
-                  <!-- <div class="col-md-3 col-sm-12 col-xs-12">
-                    <div>
-                      <div class="x_title">
-                        <h2>Top Profiles</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li><a href="#"><i class="fa fa-chevron-up"></i></a>
-                          </li>
-                          <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                              <li><a href="#">Settings 1</a>
-                              </li>
-                              <li><a href="#">Settings 2</a>
-                              </li>
-                            </ul>
-                          </li>
-                          <li><a href="#"><i class="fa fa-close"></i></a>
-                          </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                      </div>
-                      <ul class="list-unstyled top_profiles scroll-view">
-                        <li class="media event">
-                          <a class="pull-left border-aero profile_thumb">
-                            <i class="fa fa-user aero"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-green profile_thumb">
-                            <i class="fa fa-user green"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-blue profile_thumb">
-                            <i class="fa fa-user blue"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-aero profile_thumb">
-                            <i class="fa fa-user aero"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-green profile_thumb">
-                            <i class="fa fa-user green"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div> -->
+                  
 
                 </div>
               </div>
             </div>
           </div>
-          
-          <!-- <div class="col-md-12 col-sm-12 col-xs-12">
+
+          <div class="row">
+            <div class="col-md-12 hidden-sm hidden-xs">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>Bar graph <small>Sessions</small></h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>By Hour <small>Entrances</small></h2>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <canvas id="mybarChart"></canvas>
+                  <div id="heatmapHour"><!-- Plotly chart will be drawn inside this DIV -->
+                  </div>
                 </div>
               </div>
-          </div> -->
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12 hidden-sm hidden-xs">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>By Weekday <small>Entrances</small></h2>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <div id="heatmapWeekday"><!-- Plotly chart will be drawn inside this DIV -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
                   <h2>Download Raw Data <small>Entrances</small></h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a href="javascript:;"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li><a href="javascript:;"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -421,8 +337,9 @@
                 </div>
               </div>
             </div>
-
-
+          </div>
+          
+          
         </div>
 
         <!-- footer content -->
@@ -468,15 +385,15 @@
 
   <!-- flot js -->
   <!--[if lte IE 8]><script type="text/javascript" src="js/excanvas.min.js"></script><![endif]-->
-  <script type="text/javascript" src="js/flot/jquery.flot.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.pie.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.orderBars.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.time.min.js"></script>
-  <script type="text/javascript" src="js/flot/date.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.spline.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.stack.js"></script>
-  <script type="text/javascript" src="js/flot/curvedLines.js"></script>
-  <script type="text/javascript" src="js/flot/jquery.flot.resize.js"></script>
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.pie.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.orderBars.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.time.min.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/date.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.spline.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.stack.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/curvedLines.js"></script> -->
+  <!-- <script type="text/javascript" src="js/flot/jquery.flot.resize.js"></script> -->
   <!-- pace -->
   <script src="js/pace/pace.min.js"></script>
   <script src="js/datatables/jquery.dataTables.min.js"></script>
@@ -488,9 +405,10 @@
   <script src="js/datatables/vfs_fonts.js"></script>
   <script src="js/datatables/buttons.html5.min.js"></script>
   <script src="js/datatables/buttons.print.min.js"></script>
-  <script src="js/datatables/dataTables.fixedHeader.min.js"></script>
-  <script src="js/datatables/dataTables.keyTable.min.js"></script>
+  <!-- <script src="js/datatables/dataTables.fixedHeader.min.js"></script> -->
+  <!-- <script src="js/datatables/dataTables.keyTable.min.js"></script> -->
   <script src="js/datatables/dataTables.responsive.min.js"></script>
   <script src="js/datatables/responsive.bootstrap.min.js"></script>
-  <script src="js/datatables/dataTables.scroller.min.js"></script>
+  <!-- <script src="js/datatables/dataTables.scroller.min.js"></script> -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </body>

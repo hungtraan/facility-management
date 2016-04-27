@@ -8,10 +8,13 @@ Rails.application.routes.draw do
   root 'pages#student'
   get '/admin' => 'admin#dashboard_realtime'
 
-  get '/bye' => 'application#bye'
-  get 'pages/data_get', :defaults => { :format => 'json' }
+  # get '/bye' => 'application#bye'
+  # get 'pages/data_get', :defaults => { :format => 'json' }
   match 'pages/data_post' => 'pages#data_post', via: :post
   match 'admin/data_post' => 'admin#data_post', via: :post
+  match 'admin/hourly_data' => 'admin#hourly_data', via: :post
+  match 'admin/weekday_hourly_data' => 'admin#weekday_hourly_data', via: :post
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

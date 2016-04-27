@@ -12,18 +12,17 @@
 
 // require jquery.nicescroll
 // require moment
-
-// require gauges
-// require jquery
-// require jquery.flot
-// require jquery.flot.pie
 // require chartjs/chart.min
 
+Array.prototype.max = function() {
+  return Math.max.apply(null, this);
+};
 
 var handleDataTableButtons = function() {
               "use strict";
               0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
               	destroy: true,
+              	responsive: true,
                 dom: "Bfrtip",
                 buttons: [{
                   extend: "copy",
@@ -56,13 +55,14 @@ var handleDataTableButtons = function() {
 
 
 $('document').ready(function() {
+	$('.dropdown-toggle').dropdown();
+
 	Chart.defaults.global.legend = {
     	enabled: false
     };
 
-
-	// Bar chart
-	var ctx = document.getElementById("mybarChart");
+	// Bar chart initializer
+	var ctx = document.getElementById("barChart");
 		var mybarChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
@@ -74,7 +74,7 @@ $('document').ready(function() {
 			}], 
 			},
 		options: {
-			// responsive: true,
+			responsive: true,
 			scales: {
 				yAxes: [{
 					ticks: {
@@ -89,8 +89,8 @@ $('document').ready(function() {
 						type: "time",
 						time: {
 							format: 'MM/DD/YYYY',
-							unitStepSize: 1,
 							unit: 'day',
+							unitStepSize: 1,
 							round: 'day',
 							tooltipFormat: 'll'
 						},
@@ -103,13 +103,23 @@ $('document').ready(function() {
 		}
 	});
 
+	// Function to update various charts and numbers on ajax update
 	var updateChartjs = function(labels,data) {
-		// console.log(mybarChart);
-		// console.log(mybarChart.config.data.datasets[0].data);
-		// console.log(mybarChart.points);
 		mybarChart.config.data.datasets[0].data = data;
 		mybarChart.config.data.labels = labels;
 		mybarChart.update();
+		var total_entrances = 0;
+		for(var i = 0; i < data.length; i++) {
+			total_entrances = total_entrances + data[i];
+		}
+		
+		// Top Widget section
+		$('.entrance-count').html(Math.round(total_entrances/data.length));
+		$('.total_entrances').html(total_entrances);
+		$('.busiest_day').html(data.max());
+		busiest_date = moment(labels[data.indexOf(data.max())]).format("ll");
+		$('.busiest_date').html(busiest_date);
+		
 	}
 
 	var ajaxRefresh = function(json){
@@ -122,13 +132,12 @@ $('document').ready(function() {
 		    dataday = [new Date(date),eachDay[1]];
 		    labels.push(new Date(date));
 		    entrances.push(eachDay[1]);
-		    // console.log(dataday);
-		    // toRender.push(dataday);
 		}
-		// console.log(toRender);
-		// updateChart(toRender);
 		updateChartjs(labels,entrances);
 	}
+
+	// Populate DataTable with json response from ajax
+	// Destroy the current table and draw a new one
 	var populateDataTable = function(json){
 	    $('#datatable-buttons').dataTable().fnDestroy();
 		$('#datatable-buttons > tbody').html("");
@@ -138,6 +147,103 @@ $('document').ready(function() {
 		TableManageButtons.init();
 	}
 	
+	var heatmapHourlyDaily = function(json){
+		hour_arr = [];
+		date_arr = [];
+		// z: [[1, 20, 30, 50, 1], 
+	    	// [20, 1, 60, 80, 30], 
+	    	// [30, 60, 1, -10, 20]],
+	 	for(var hour = 5; hour < 23; hour++){
+	 		entraces_by_date = [];
+	 		for (var row in json){
+	 			if (json[row][1] == hour){
+	 				entraces_by_date.push(json[row][2]);
+	 			}
+	 			if (json[row][1] == 5){
+	 				date_arr.push(json[row][0]);
+	 			}
+			}
+			hour_arr.push(entraces_by_date);
+		}
+		var data = [
+				  {
+				    z: hour_arr,
+				    x: date_arr,
+				    y: ['5AM','6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','9PM','10PM'],
+				    type: 'heatmap',
+				    colorscale: [[0, '#26B99A'],
+								 [1, '#001f3f']],
+
+				  }
+				];
+		var layout = {
+			annotations: [],
+			height: 600,
+			xaxis: {
+				type: 'category',
+				ticks: '',
+				side: 'bottom'
+				},
+			yaxis: {
+					ticks: '',
+					ticksuffix: ' ',
+					autosize: false
+				}
+			};
+
+		Plotly.newPlot('heatmapHour', data, layout);
+	}
+
+	var heatmapHourlyWeekday = function(json){
+		entraces_by_weekday = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+		// z: [[1, 20, 30, 50, 1], // hour 1 [day1, day2, day 3]
+	    	// [20, 1, 60, 80, 30], 
+	    	// [30, 60, 1, -10, 20]],
+    	for (var row in json){
+ 			// json[row][0] = weekday Mon-Sun
+ 			// json[row][1] = hour 1-22
+ 			// json[row][2] = weekdaynum 0-6 (Mon-Sun)
+ 			// json[row][3] = entrances
+ 			hour = json[row][1];
+			weekdaynum = json[row][2];
+			if (typeof hour == 'undefined' || typeof weekdaynum == 'undefined'){
+				break;
+			}
+			if (typeof entraces_by_weekday[hour-5][weekdaynum] == 'undefined' && entraces_by_weekday[hour-5][weekdaynum] == null) {
+				entraces_by_weekday[hour-5][weekdaynum] = 0;
+			}
+			entraces_by_weekday[hour-5][weekdaynum] += json[row][3];
+			// hour-5 for indexing
+		}
+		
+		var data = [
+				  {
+				    z: entraces_by_weekday,
+				    x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],
+				    y: ['5AM','6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','9PM','10PM'],
+				    type: 'heatmap',
+				    colorscale: [[0, '#26B99A'],
+								 [1, '#001f3f']],
+
+				  }
+				];
+		var layout = {
+			annotations: [],
+			height: 600,
+			xaxis: {
+				type: 'category',
+				ticks: '',
+				side: 'bottom'
+				},
+			yaxis: {
+					ticks: '',
+					ticksuffix: ' ',
+					autosize: true
+				}
+			};
+		Plotly.newPlot('heatmapWeekday', data, layout);
+	}
+
 	// Load recent week
 	var initStartDate = moment().subtract(6, 'days').format('YYYY-MM-DD 00:00:00');
 	var initEndDate = moment().format('YYYY-MM-DD 23:59:59'); //2016-04-08 22:00:00
@@ -145,7 +251,6 @@ $('document').ready(function() {
         method: "POST",
         url: "admin/data_post",
         dataType: "json",
-        async:false,
         data: {
             time_from: initStartDate,
             time_to: initEndDate
@@ -155,7 +260,33 @@ $('document').ready(function() {
 	    	populateDataTable(json);
 	    }
 	});
-    
+
+    $.ajax({
+    	method:"POST",
+    	url: "admin/hourly_data",
+        dataType: "json",
+    	data: {
+            time_from: initStartDate,
+            time_to: initEndDate
+        },
+        success: function(json) {
+            heatmapHourlyDaily(json);
+        }
+    });
+
+    $.ajax({
+    	method:"POST",
+    	url: "admin/weekday_hourly_data",
+        dataType: "json",
+    	data: {
+            time_from: initStartDate,
+            time_to: initEndDate
+        },
+        success: function(json) {
+            heatmapHourlyWeekday(json);
+        }
+    });
+
     var cb = function(start, end, label) {
         console.log(start.toISOString(), end.toISOString(), label);
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -181,6 +312,8 @@ $('document').ready(function() {
             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Week': [moment().startOf('week'), moment().endOf('week')],
+            'Last Week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
             'This Month': [moment().startOf('month'), moment().endOf('month')],
             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
@@ -196,7 +329,7 @@ $('document').ready(function() {
             fromLabel: 'From',
             toLabel: 'To',
             customRangeLabel: 'Custom',
-            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             firstDay: 1
         }
@@ -224,12 +357,34 @@ $('document').ready(function() {
                     time_to: time_to
                 },
 	            success: function(json) {
-	                // console.log(json);
-	                // alert("Data Saved: " + msg);
 	                ajaxRefresh(json);
 	                populateDataTable(json);
 	            }
 	        });
+        $.ajax({
+	    	method:"POST",
+	    	url: "admin/hourly_data",
+	        dataType: "json",
+	    	data: {
+	            time_from: time_from,
+	            time_to: time_to
+	        },
+	        success: function(json) {
+	            heatmapHourlyDaily(json);
+	        }
+	    });
+	    $.ajax({
+	    	method:"POST",
+	    	url: "admin/weekday_hourly_data",
+	        dataType: "json",
+	    	data: {
+	            time_from: time_from,
+	            time_to: time_to
+	        },
+	        success: function(json) {
+	            heatmapHourlyWeekday(json);
+	        }
+	    });
     });
     // $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
     //     console.log("cancel event fired");
@@ -245,141 +400,7 @@ $('document').ready(function() {
     });
     // Datepicker end
 
-    $(".sparkline_one").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5, 4, 5, 4, 5, 4, 3, 4, 5, 6, 7, 5, 4, 3, 5, 6], {
-        type: 'bar',
-        height: '125',
-        barWidth: 13,
-        colorMap: {
-            '7': '#a1a1a1'
-        },
-        barSpacing: 2,
-        barColor: '#26B99A'
-    });
-
-    $(".sparkline11").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3], {
-        type: 'bar',
-        height: '40',
-        barWidth: 8,
-        colorMap: {
-            '7': '#a1a1a1'
-        },
-        barSpacing: 2,
-        barColor: '#26B99A'
-    });
-
-    $(".sparkline22").sparkline([2, 4, 3, 4, 7, 5, 4, 3, 5, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6], {
-        type: 'line',
-        height: '40',
-        width: '200',
-        lineColor: '#26B99A',
-        fillColor: '#ffffff',
-        lineWidth: 3,
-        spotColor: '#34495E',
-        minSpotColor: '#34495E'
-    });
     // TableManageButtons.init();
+
+
 });
-
-
-	// var updateChart = function(d1) {
-	// 	if (d1 == undefined || d1 == null){
-	// 		var d1 = [];
-	// 		//here we generate data for chart
-	// 	    for (var i = 0; i < 30; i++) {
-	// 	        d1.push([new Date(Date.today().add(i).days()).getTime(), randNum() + i + i + 10]);
-	// 	        //    d2.push([new Date(Date.today().add(i).days()).getTime(), randNum()]);
-	// 	    }
-	// 	}
-	//     console.log(d1);
-	//     var chartMinDate = d1[0][0]; //first day
-	//     var chartMaxDate = d1[d1.length-1][0]; //last day
-	//     console.log(chartMinDate, chartMaxDate);
-	//     var tickSize = [1, "day"];
-	//     var tformat = "%Y/%m/%d";
-
-	//     //graph options
-	//     var options = {
-	//         grid: {
-	//             show: true,
-	//             aboveData: true,
-	//             color: "#3f3f3f",
-	//             labelMargin: 10,
-	//             axisMargin: 0,
-	//             borderWidth: 0,
-	//             borderColor: null,
-	//             minBorderMargin: 5,
-	//             clickable: true,
-	//             hoverable: true,
-	//             autoHighlight: true,
-	//             mouseActiveRadius: 100
-	//         },
-	//         series: {
-	//             lines: {
-	//                 show: true,
-	//                 fill: true,
-	//                 lineWidth: 2,
-	//                 steps: false
-	//             },
-	//             points: {
-	//                 show: true,
-	//                 radius: 4.5,
-	//                 symbol: "circle",
-	//                 lineWidth: 3.0,
-	//                 hoverable: true
-	//             }
-	//         },
-	//         legend: {
-	//             position: "ne",
-	//             margin: [0, -25],
-	//             noColumns: 0,
-	//             labelBoxBorderColor: null,
-	//             labelFormatter: function(label, series) {
-	//                 // just add some space to labes
-	//                 return label + '&nbsp;&nbsp;';
-	//             },
-	//             width: 40,
-	//             height: 1
-	//         },
-	//         colors: chartColours,
-	//         shadowSize: 0,
-	//         // showTooltips: true, //activate tooltip
-	//         // tooltipOpts: {
-	//         //     content: "%s: %y.0",
-	//         //     xDateFormat: "%m/%d",
-	//         //     shifts: {
-	//         //         x: -10,
-	//         //         y: -10
-	//         //     },
-	//         //     defaultTheme: true
-	//         // },
-	//         tooltip: {
-	// 	        format: {
-	// 	            title: function (d) { return 'Data ' + d; },
-	// 	            value: function (value, ratio, id) {
-	// 	                var format = d3.format(',') ;
-	// 	                return format(value);
-	// 	            }
-	// 	        }
-	// 	    },
-	//         yaxis: {
-	//             min: 0
-	//         },
-	//         xaxis: {
-	//             mode: "time",
-	//             minTickSize: tickSize,
-	//             timeformat: tformat,
-	//             min: chartMinDate,
-	//             max: chartMaxDate
-	//         }
-	//     };
-	//     var plot = $.plot($("#placeholder33x"), [{
-	//         label: "Entrances",
-	//         data: d1,
-	//         lines: {
-	//             fillColor: "rgba(150, 202, 89, 0.12)"
-	//         }, //#96CA59 rgba(150, 202, 89, 0.42)
-	//         points: {
-	//             fillColor: "#fff"
-	//         }
-	//     }], options);
-	// }
