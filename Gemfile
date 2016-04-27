@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+
+gem 'omniauth-google-oauth2', '~> 0.2.1'
 gem 'rails',        '4.2.2'
 gem 'mysql2', '~> 0.3.18'
 gem 'safe_yaml', '~> 1.0', '>= 1.0.4'
