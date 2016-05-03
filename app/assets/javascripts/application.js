@@ -15,3 +15,6 @@
 //= require turbolinks
 //= require_tree .
 //= require_self
+//= stub dashboard_realtime
+//= stub login
+//= stub student

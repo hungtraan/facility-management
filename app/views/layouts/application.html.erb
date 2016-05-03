@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => false %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <% #javascript_include_tag params[:controller] %>
-  <%= csrf_meta_tags %>
+	<title><%= full_title(yield(:title)) %></title>
+	<%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => false %>
+	<%# javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+	<%= csrf_meta_tags %>
+	<%= stylesheet_link_tag params[:controller], media: 'all', 'data-turbolinks-track' => false %>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Custom styling plus plugins -->
+	<link rel="stylesheet" type="text/css" href="/css/maps/jquery-jvectormap-2.0.3.css" />
+	<link href="/css/floatexamples.css" rel="stylesheet" />
 </head>
-<body>
-
-<%= yield %>
-
+<body>	
+    <%= yield %>
 </body>
 </html>

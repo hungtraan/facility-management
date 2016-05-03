@@ -1,0 +1,44 @@
+<% @title = "Login to Admin Dashboard" %>
+
+<% provide(:title, @title) %>
+<link href="/css/custom.css" rel="stylesheet">
+
+<div class="">
+  <div id="wrapper">
+    <div id="login" class="animate form">
+      <section class="login_content">          
+        <h1>Admin login</h1>
+        <div>
+          <% if user_signed_in? %>
+            <% if @not_admin %>
+                <strong style="color:#fff"><%= current_user.email %> is not an authorized administrator!</strong>
+            <% else %>
+                <p>Signed in as <strong><%= current_user.name %></strong> (<%= current_user.email %>)!</p>
+                <p><a href="/admin">Go back to Dashboard</a></p>
+            <% end %>  
+            <p><%= link_to "Sign out", destroy_user_session_path,:method => :delete %></p>
+            <p>(You will also need to sign out of Google separately)</p>
+          <% else %>
+          <%= link_to user_google_oauth2_omniauth_authorize_path, class:"login-button button--social-login button--googleplus" do %>
+            <i class="icon fa fa-google"></i>Login With Google
+          <% end %>
+
+          <% end %>
+        </div>
+        
+          <div class="clearfix"></div>
+          <div class="separator">
+            <div class="clearfix"></div>
+            <br />
+            <div>
+              <p>This dashboard is limited to the use of Mitchell Center's administrators.</p>
+            </div>
+          </div>
+
+        <!-- form -->
+      </section>
+      <!-- content -->
+    </div>
+    
+  </div>
+</div>

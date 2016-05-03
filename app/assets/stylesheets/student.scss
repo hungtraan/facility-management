@@ -3,17 +3,27 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 /* Using rems to easily scale these gauges */
-body {
+body.student{
     margin-top: 4rem;
     font-weight: 400;
     font-family: 'Open Sans';
     height: 100%;
-    background-color: rgb(231, 255, 250);
+    background-color: rgba(231, 255, 250, 0.5);
     
     .container{
         margin: 0 auto;
         text-align: center;
         .row{
+        	&.header{
+				margin-bottom: 30px;
+        	}
+        	&.footer{
+        		margin-top: 30px;
+        	}
+        	h1{
+        		color: #337AB7;
+        		margin-bottom: 20px;
+        	}
             #chart {
                 width: 300px;
                 margin: 0 auto;
@@ -37,9 +47,28 @@ body {
                 font-size: 0.75rem;
             }
         }
+    }
 
+    header{
+    	position:fixed;
+		left:0px;
+		top:0px;
+		height:30px;
+		width:100%;
+		background:#C60C30;
 
+    	.logo{
+    		height: 30px;
+    		float:left;
+    	}
+    	p.name{
+			position: relative;
+			float: left;
+			padding-top: 6px;
+			color: #fff;
+			font-weight: 100;
+			text-transform: uppercase;
+    	}
     }
 
 }
-
