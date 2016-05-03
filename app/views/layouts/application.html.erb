@@ -2,36 +2,17 @@
 <html>
 <head>
 	<title><%= full_title(yield(:title)) %></title>
-	<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => false %>
-	<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-	<% #javascript_include_tag params[:controller] %>
+	<%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => false %>
+	<%# javascript_include_tag 'application', 'data-turbolinks-track' => true %>
 	<%= csrf_meta_tags %>
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-
-	<!-- <link href="fonts/css/font-awesome.min.css" rel="stylesheet"> -->
-	<!-- <link href="css/animate.min.css" rel="stylesheet"> -->
+	<%= stylesheet_link_tag params[:controller], media: 'all', 'data-turbolinks-track' => false %>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
 
 	<!-- Custom styling plus plugins -->
-	<link href="css/custom.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/maps/jquery-jvectormap-2.0.3.css" />
-	<!-- <link href="css/icheck/flat/green.css" rel="stylesheet"> -->
-	<link href="css/floatexamples.css" rel="stylesheet" />
-	<link href="js/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-
-	<!-- <script src="js/jquery.min.js"></script> -->
+	<link rel="stylesheet" type="text/css" href="/css/maps/jquery-jvectormap-2.0.3.css" />
+	<link href="/css/floatexamples.css" rel="stylesheet" />
 </head>
-<body>
-
-	<div>
-      <% if current_user %>
-        Signed in as <strong><%= current_user.name %></strong>!
-        <%= link_to "Sign out", signout_path, id: "sign_out" %>
-      <% else %>
-        <%= link_to "Sign in with Google", "/auth/google_oauth2", id: "sign_in" %>
-      <% end %>
-    </div>
-    <div>
+<body>	
     <%= yield %>
-    </div>
 </body>
 </html>

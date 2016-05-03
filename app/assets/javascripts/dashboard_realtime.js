@@ -147,12 +147,15 @@ $('document').ready(function() {
 		TableManageButtons.init();
 	}
 	
+	// This function plots the heatmap by hour (Y axis) and dates (X values)
+	// Data is passed into the function as a json
 	var heatmapHourlyDaily = function(json){
 		hour_arr = [];
 		date_arr = [];
-		// z: [[1, 20, 30, 50, 1], 
-	    	// [20, 1, 60, 80, 30], 
-	    	// [30, 60, 1, -10, 20]],
+
+		// z: [[1, 20, 30, 50, 1],  // This is the required form of the data to be 
+	    	// [20, 1, 60, 80, 30], // transformed into from json data
+	    	// [30, 60, 1, -10, 20]], // hour 1 [day1, day2, day 3]
 	 	for(var hour = 5; hour < 23; hour++){
 	 		entraces_by_date = [];
 	 		for (var row in json){
@@ -180,7 +183,7 @@ $('document').ready(function() {
 			annotations: [],
 			height: 600,
 			xaxis: {
-				type: 'category',
+				type: 'category', // If changed type to 'time', color won't show
 				ticks: '',
 				side: 'bottom'
 				},
@@ -194,6 +197,8 @@ $('document').ready(function() {
 		Plotly.newPlot('heatmapHour', data, layout);
 	}
 
+	// This function plots the heatmap by hour (Y axis) and the 7 weekday names (X values)
+	// Data is passed into the function as a json
 	var heatmapHourlyWeekday = function(json){
 		entraces_by_weekday = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
 		// z: [[1, 20, 30, 50, 1], // hour 1 [day1, day2, day 3]
@@ -244,56 +249,58 @@ $('document').ready(function() {
 		Plotly.newPlot('heatmapWeekday', data, layout);
 	}
 
-	// Load recent week
+	var ajaxCalls = function(time_from, time_to){
+		$.ajax({ // Populate bar chart and data table
+                method: "POST",
+                url: "admin/data_post",
+                data: {
+                    time_from: time_from,
+                    time_to: time_to
+                },
+	            success: function(json) {
+	                ajaxRefresh(json);
+	                populateDataTable(json);
+	            }
+	        });
+        $.ajax({ // Populate the heatmap by hours & dates
+	    	method:"POST",
+	    	url: "admin/hourly_data",
+	        dataType: "json",
+	    	data: {
+	            time_from: time_from,
+	            time_to: time_to
+	        },
+	        success: function(json) {
+	            heatmapHourlyDaily(json);
+	        }
+	    });
+	    $.ajax({ // Populate the heatmap by hours & weekday names
+	    	method:"POST",
+	    	url: "admin/weekday_hourly_data",
+	        dataType: "json",
+	    	data: {
+	            time_from: time_from,
+	            time_to: time_to
+	        },
+	        success: function(json) {
+	            heatmapHourlyWeekday(json);
+	        }
+	    });
+	}
+
+	// BEGIN INITIALIZATION AJAX CALLS ==========================
 	var initStartDate = moment().subtract(6, 'days').format('YYYY-MM-DD 00:00:00');
 	var initEndDate = moment().format('YYYY-MM-DD 23:59:59'); //2016-04-08 22:00:00
-	$.ajax({
-        method: "POST",
-        url: "admin/data_post",
-        dataType: "json",
-        data: {
-            time_from: initStartDate,
-            time_to: initEndDate
-        },
-	    success:function(json) {
-	    	ajaxRefresh(json);
-	    	populateDataTable(json);
-	    }
-	});
+	ajaxCalls(initStartDate, initEndDate);
 
-    $.ajax({
-    	method:"POST",
-    	url: "admin/hourly_data",
-        dataType: "json",
-    	data: {
-            time_from: initStartDate,
-            time_to: initEndDate
-        },
-        success: function(json) {
-            heatmapHourlyDaily(json);
-        }
-    });
-
-    $.ajax({
-    	method:"POST",
-    	url: "admin/weekday_hourly_data",
-        dataType: "json",
-    	data: {
-            time_from: initStartDate,
-            time_to: initEndDate
-        },
-        success: function(json) {
-            heatmapHourlyWeekday(json);
-        }
-    });
+    // END INITIALIZATION AJAX CALLS ==========================
 
     var cb = function(start, end, label) {
-        console.log(start.toISOString(), end.toISOString(), label);
+        // console.log(start.toISOString(), end.toISOString(), label);
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        //alert("Callback has fired: [" + start.format('MMMM D, YYYY') + " to " + end.format('MMMM D, YYYY') + ", label = " + label + "]");
     }
 
-    // Datepicker
+    // Begin Datepicker
     var optionSet1 = {
         startDate: moment().subtract(6, 'days'),
         endDate: moment(),
@@ -345,62 +352,22 @@ $('document').ready(function() {
     //     console.log("hide event fired");
     // });
 
+
+    // BEGIN ACTIONS TO TAKE WHEN APPLYING NEW DATE RANGE ============
     $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
         // console.log("apply event fired, start/end dates are " + picker.startDate.format('YYYY-MM-DD HH:mm:ss') + " to " + picker.endDate.format('YYYY-MM-DD'));
         var time_from = picker.startDate.format("YYYY-MM-DD HH:mm:ss"); //format: 2016-04-07 00:00:00
         var time_to = picker.endDate.format("YYYY-MM-DD HH:mm:ss");
-        $.ajax({
-                method: "POST",
-                url: "admin/data_post",
-                data: {
-                    time_from: time_from,
-                    time_to: time_to
-                },
-	            success: function(json) {
-	                ajaxRefresh(json);
-	                populateDataTable(json);
-	            }
-	        });
-        $.ajax({
-	    	method:"POST",
-	    	url: "admin/hourly_data",
-	        dataType: "json",
-	    	data: {
-	            time_from: time_from,
-	            time_to: time_to
-	        },
-	        success: function(json) {
-	            heatmapHourlyDaily(json);
-	        }
-	    });
-	    $.ajax({
-	    	method:"POST",
-	    	url: "admin/weekday_hourly_data",
-	        dataType: "json",
-	    	data: {
-	            time_from: time_from,
-	            time_to: time_to
-	        },
-	        success: function(json) {
-	            heatmapHourlyWeekday(json);
-	        }
-	    });
+        ajaxCalls(time_from, time_to);
     });
+    // END ACTIONS TO TAKE WHEN APPLYING NEW DATE RANGE ============
+
     // $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
     //     console.log("cancel event fired");
     // });
-    $('#options1').click(function() {
-        $('#reportrange').data('daterangepicker').setOptions(optionSet1, cb);
-    });
-    $('#options2').click(function() {
-        $('#reportrange').data('daterangepicker').setOptions(optionSet2, cb);
-    });
     $('#destroy').click(function() {
         $('#reportrange').data('daterangepicker').remove();
     });
-    // Datepicker end
-
-    // TableManageButtons.init();
-
+    // End Datepicker
 
 });

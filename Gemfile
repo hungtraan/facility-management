@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-
+gem 'devise'
+gem 'omniauth'
 gem 'omniauth-google-oauth2', '~> 0.2.1'
 gem 'rails',        '4.2.2'
 gem 'mysql2', '~> 0.3.18'

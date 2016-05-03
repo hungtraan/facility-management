@@ -4808,14 +4808,14 @@ a:hover {
   padding: 25px 0 0;
   position: relative;
   text-align: center;
-  text-shadow: 0 1px 0 #fff;
+  // text-shadow: 0 1px 0 #fff;
   min-width: 280px;
 }
 .login_content h1 {
   font: normal 25px Helvetica, Arial, sans-serif;
   letter-spacing: -0.05em;
   line-height: 20px;
-  margin: 10px 0 30px;
+  margin: -25px 0 30px;
 }
 .login_content h1:before, .login_content h1:after {
   content: "";

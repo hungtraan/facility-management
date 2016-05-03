@@ -34,9 +34,18 @@ class PagesController < ApplicationController
             # the values are pre-built ruby primitives mapped from their corresponding field types in MySQL
             @occupancy = row["occupancy"]
             @zone_name = row["zone_name"]
-            @updated_at = row["time_to"]
+            @updated_at = row["time_to"].strftime "%b %d, %Y - %H:%M:%S"
             if row["dne"]  # non-existant hash entry is nil
-            puts row["dne"]
+                puts row["dne"]
+            end
+        end
+    end
+
+    def login
+        admins = Rails.application.secrets.admin_group
+        if !current_user.nil?
+            if !(current_user.email).in?admins
+                @not_admin = true
             end
         end
     end

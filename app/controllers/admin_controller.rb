@@ -1,4 +1,16 @@
 class AdminController < ApplicationController
+
+    before_action :authenticate_user!
+    def authenticate_user!
+        admins = Rails.application.secrets.admin_group
+        
+        if current_user.nil?
+            redirect_to '/admin/login'
+        elsif !(current_user.email).in?admins
+            redirect_to '/admin/login'
+        end
+    end
+
 	cfg_path = Rails.root.join('python-jobs', 'config.yml').to_s
     @@cfg = YAML.load File.open(cfg_path)
     

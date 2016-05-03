@@ -1,3 +1,4 @@
+//= require jquery
 //= require d3
 
 $(document).ready(function(){
@@ -98,23 +99,23 @@ $(document).ready(function(){
 
 	update(perc, occupancy);
 
-	$('input.update').on('click', function () {
-	    $.ajax({
-			type: "GET",
-			contentType: "application/json; charset=utf-8",
-			url: 'pages/data_get',
-			dataType: 'json',
-			success: function (data) {
-				console.log(data);
-				$('.time').html(data.time);
-				perc = Math.round(data.occupancy/120*100);
-				update(perc, data.occupancy);
-			},
-			error: function (result) {
-			   error();
-			}
-		});
-	});
+	// $('input.update').on('click', function () {
+	//     $.ajax({
+	// 		type: "GET",
+	// 		contentType: "application/json; charset=utf-8",
+	// 		url: 'pages/data_get',
+	// 		dataType: 'json',
+	// 		success: function (data) {
+	// 			console.log(data);
+	// 			$('.time').html(data.time);
+	// 			perc = Math.round(data.occupancy/120*100);
+	// 			update(perc, data.occupancy);
+	// 		},
+	// 		error: function (result) {
+	// 		   error();
+	// 		}
+	// 	});
+	// });
 
 	// $('input.update').on('click', function () {
 	// 	$.ajax({
