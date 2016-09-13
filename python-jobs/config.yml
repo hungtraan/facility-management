@@ -1,8 +1,8 @@
 mysql:
     host: localhost
-    user: cs349common
-    passwd: gogocs349
-    db: cs349
+    user: 
+    passwd: 
+    db: 
 
 mysql_heroku:
     host: us-cdbr-iron-east-03.cleardb.net
@@ -11,11 +11,11 @@ mysql_heroku:
     db: heroku_fa3c47157b8ffc1
 
 scanalytics:
-    username: tran_h3@denison.edu
-    password: makeitcount
-    clientId: 41082c49d21ec03ab278adadca407567585621e5
-    clientSecret: e74845de757512ca7d9ca78a809a8d9335ad5d7cebc385c192f71e47d0be9d7a
-    array_key_list: 1AMDJ
+    username: 
+    password: 
+    clientId: 
+    clientSecret: 
+    array_key_list: 
 
 other:
     preprocessing_queue:
